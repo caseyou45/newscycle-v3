@@ -19,14 +19,19 @@ import java.util.NoSuchElementException;
 public class CommentController {
 
 
-    @Autowired
     CommentRepository commentRepository;
 
-    @Autowired
     ArticleRepository articleRepository;
 
-    @Autowired
     UsersRepository usersRepository;
+
+
+    @Autowired
+    public CommentController(CommentRepository commentRepository, ArticleRepository articleRepository, UsersRepository usersRepository) {
+        this.commentRepository = commentRepository;
+        this.articleRepository = articleRepository;
+        this.usersRepository = usersRepository;
+    }
 
     @PostMapping("/comment")
     public ResponseEntity<Comment> createComment(@RequestBody Comment commentRequest) {
@@ -53,18 +58,23 @@ public class CommentController {
     }
 
     @PostMapping("/comment/reply")
-    public ResponseEntity<Comment> createReply(@RequestParam Long parentCommentID,
-                                               @RequestBody Comment commentRequest) {
+    public ResponseEntity<Comment> createReply(@RequestBody Comment commentRequest) {
         try {
 
 
-            Comment parentComment = commentRepository.findById(parentCommentID).get();
+            Comment parentComment = commentRepository.findById(commentRequest.getParentComment()).get();
 
             Comment savedComment = commentRepository.save(commentRequest);
 
             parentComment.getReplies().add(savedComment);
 
             commentRepository.save(parentComment);
+
+            Users user = usersRepository.findById(commentRequest.getAuthor()).get();
+
+            user.getComments().add(savedComment);
+
+            usersRepository.save(user);
 
             return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
         } catch (NoSuchElementException e) {
@@ -97,6 +107,17 @@ public class CommentController {
 
         }
 
+    }
+
+    @GetMapping("/comment")
+    public ResponseEntity<Comment> getComment(@RequestParam Long commentID) {
+        try {
+            Comment comment = commentRepository.findById(commentID).get();
+            return new ResponseEntity<>(comment, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        }
 
     }
 }

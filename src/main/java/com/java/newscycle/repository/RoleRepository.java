@@ -1,13 +1,12 @@
 package com.java.newscycle.repository;
 
-import com.java.newscycle.entity.Users;
+import com.java.newscycle.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    Users findUsersByUsername(String username);
-
+    Role findByName(String name);
 
 }

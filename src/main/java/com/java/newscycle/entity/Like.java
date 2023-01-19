@@ -14,8 +14,10 @@ public class Like {
     private Boolean deleted;
 
     @Column(name = "author")
-    private Integer author;
+    private Long author;
 
+    @Column(name = "articleID")
+    private Long articleID;
     @Column(name = "commentID")
     private Long commentID;
 
@@ -27,13 +29,10 @@ public class Like {
     public Like() {
     }
 
-    public Like(Boolean deleted, Integer author) {
+    public Like(Boolean deleted, Long author, Long commentID) {
         this.deleted = deleted;
         this.author = author;
-    }
-
-    public Like(Boolean deleted) {
-        this.deleted = deleted;
+        this.commentID = commentID;
     }
 
     public Long getId() {
@@ -44,12 +43,36 @@ public class Like {
         this.id = id;
     }
 
-    public Boolean isDeleted() {
+    public Long getArticleID() {
+        return articleID;
+    }
+
+    public void setArticleID(Long articleID) {
+        this.articleID = articleID;
+    }
+
+    public Boolean getDeleted() {
         return deleted;
     }
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Long getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Long author) {
+        this.author = author;
+    }
+
+    public Long getCommentID() {
+        return commentID;
+    }
+
+    public void setCommentID(Long commentID) {
+        this.commentID = commentID;
     }
 
     public Comment getComment() {
