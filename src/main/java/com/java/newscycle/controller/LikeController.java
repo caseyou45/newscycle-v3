@@ -37,14 +37,9 @@ public class LikeController {
     @PostMapping("/like")
     public ResponseEntity<Like> createLike(@RequestBody Like madeLike) {
         try {
-
-
             Comment likedComment = commentRepository.findById(madeLike.getCommentID()).get();
 
-            madeLike.setComment(likedComment);
-
             Like savedLike = likeRepository.save(madeLike);
-
 
             likedComment.getLikes().add(savedLike);
             commentRepository.save(likedComment);
@@ -63,7 +58,7 @@ public class LikeController {
         }
     }
 
-    @DeleteMapping("/like")
+    @PatchMapping("/like")
     public ResponseEntity<Like> deleteLike(@RequestBody Like like) {
         try {
 

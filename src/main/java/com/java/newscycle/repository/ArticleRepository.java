@@ -12,6 +12,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     List<Article> findArticleByUrltoimage(String urltoimage);
 
-
     List<Article> getArticlesByCategoryOrderByPublishedatDesc(String category);
 }

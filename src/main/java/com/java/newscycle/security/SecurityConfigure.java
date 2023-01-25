@@ -40,13 +40,13 @@ public class SecurityConfigure {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(HttpMethod.GET, "/api/article/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/article?**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/vote/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/article?id=**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/comment/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/").permitAll()
+                .requestMatchers(HttpMethod.GET, "/null").permitAll()
                 .requestMatchers("/api/user/signup").permitAll()
                 .requestMatchers("/api/user/signin").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .httpBasic();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

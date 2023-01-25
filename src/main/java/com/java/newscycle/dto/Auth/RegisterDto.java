@@ -1,4 +1,4 @@
-package com.java.newscycle.dto;
+package com.java.newscycle.dto.Auth;
 
 import lombok.Data;
 

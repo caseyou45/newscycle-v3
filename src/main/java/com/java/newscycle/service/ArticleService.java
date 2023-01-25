@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Component
 public class ArticleService {
@@ -17,14 +18,6 @@ public class ArticleService {
     @Autowired
     private ArticleRepository articleRepository;
 
-    /*
-        This method takes in a category of news. It then makes an API call to NewsAPI for the category. The returning
-        JSON is parsed and saved in to the database through the article repository. The request articles are then
-        returned in DESC order by date.
-
-       @param  string of category choice (science, technology, general, etc.)
-       @return  articles of the requested category
-     */
     public List<Article> getArticlesByCategory(String category) {
         String uri = String.format("https://newsapi.org/v2/top-headlines?country=us&category=%s&apiKey=f8453aaefcaf4cbf90fe82afa03b2bc1", category);
 
@@ -71,7 +64,10 @@ public class ArticleService {
         }
 
         return articleRepository.getArticlesByCategoryOrderByPublishedatDesc(category);
+    }
 
+    public Article getArticleByID(Long articleID) {
+        return articleRepository.findById(articleID).orElseThrow(() -> new NoSuchElementException("Can Not Find Article With Provided ID"));
 
     }
 

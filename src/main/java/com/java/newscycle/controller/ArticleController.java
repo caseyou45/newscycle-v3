@@ -1,14 +1,12 @@
 package com.java.newscycle.controller;
 
 import com.java.newscycle.entity.Article;
-import com.java.newscycle.repository.ArticleRepository;
 import com.java.newscycle.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.util.List;
 
 
@@ -16,24 +14,35 @@ import java.util.List;
 @RequestMapping("/api")
 public class ArticleController {
 
-    ArticleRepository articleRepository;
     ArticleService articleService;
 
     @Autowired
-    public ArticleController(ArticleRepository articleRepository, ArticleService articleService) {
-        this.articleRepository = articleRepository;
+    public ArticleController(ArticleService articleService) {
         this.articleService = articleService;
     }
 
     @GetMapping("/article")
     public ResponseEntity<Article> getArticleByID(@RequestParam long id) {
-        Article article = articleRepository.findById(id).get();
-        return new ResponseEntity<>(article, HttpStatus.OK);
+
+        try {
+            Article article = articleService.getArticleByID(id);
+            return new ResponseEntity<>(article, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        }
     }
 
     @GetMapping(path = "/article/category")
     public @ResponseBody
-    List<Article> getArticlesByCategory(@RequestParam String category) throws ParseException {
-        return articleService.getArticlesByCategory(category);
+    ResponseEntity<List<Article>> getArticlesByCategory(@RequestParam String category) {
+
+        try {
+            List<Article> articles = articleService.getArticlesByCategory(category);
+            return new ResponseEntity<>(articles, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
     }
 }

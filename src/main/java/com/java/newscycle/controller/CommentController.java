@@ -1,11 +1,8 @@
 package com.java.newscycle.controller;
 
-import com.java.newscycle.entity.Article;
+import com.java.newscycle.dto.Comment.CommentDTO;
 import com.java.newscycle.entity.Comment;
-import com.java.newscycle.entity.Users;
-import com.java.newscycle.repository.ArticleRepository;
-import com.java.newscycle.repository.CommentRepository;
-import com.java.newscycle.repository.UsersRepository;
+import com.java.newscycle.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,92 +15,53 @@ import java.util.NoSuchElementException;
 @RequestMapping(path = "/api")
 public class CommentController {
 
-
-    CommentRepository commentRepository;
-
-    ArticleRepository articleRepository;
-
-    UsersRepository usersRepository;
+    CommentService commentService;
 
 
     @Autowired
-    public CommentController(CommentRepository commentRepository, ArticleRepository articleRepository, UsersRepository usersRepository) {
-        this.commentRepository = commentRepository;
-        this.articleRepository = articleRepository;
-        this.usersRepository = usersRepository;
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
     }
 
     @PostMapping("/comment")
-    public ResponseEntity<Comment> createComment(@RequestBody Comment commentRequest) {
+    public ResponseEntity<Comment> createComment(@RequestBody CommentDTO commentRequest) {
         try {
-
-            Article referencedArticle = articleRepository.findById(commentRequest.getArticle()).get();
-
-            System.out.println(commentRequest);
-            Comment savedComment = commentRepository.save(commentRequest);
-
-            referencedArticle.getComments().add(savedComment);
-            articleRepository.save(referencedArticle);
-
-            Users user = usersRepository.findById(commentRequest.getAuthor()).get();
-
-            user.getComments().add(savedComment);
-
-            usersRepository.save(user);
-
+            Comment savedComment = commentService.createComment(commentRequest);
             return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/comment/reply")
-    public ResponseEntity<Comment> createReply(@RequestBody Comment commentRequest) {
+    public ResponseEntity<Comment> createReply(@RequestBody CommentDTO commentRequest) {
         try {
-
-
-            Comment parentComment = commentRepository.findById(commentRequest.getParentComment()).get();
-
-            Comment savedComment = commentRepository.save(commentRequest);
-
-            parentComment.getReplies().add(savedComment);
-
-            commentRepository.save(parentComment);
-
-            Users user = usersRepository.findById(commentRequest.getAuthor()).get();
-
-            user.getComments().add(savedComment);
-
-            usersRepository.save(user);
-
+            Comment savedComment = commentService.createReply(commentRequest);
             return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
     @PatchMapping(path = "/comment")
     public @ResponseBody
-    ResponseEntity<Comment> updateCommentByID(@RequestBody Comment comment) {
+    ResponseEntity<Comment> updateComment(@RequestBody CommentDTO commentRequest) {
         try {
-            Comment savedComment = commentRepository.save(comment);
+            Comment savedComment = commentService.updateComment(commentRequest);
             return new ResponseEntity<>(savedComment, HttpStatus.OK);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
 
     @DeleteMapping("/comment")
-    public ResponseEntity<Comment> removeComment(@RequestBody Comment comment) {
+    public ResponseEntity<Comment> removeComment(@RequestBody CommentDTO commentRequest) {
         try {
-            Comment oldComment = commentRepository.findById(comment.getId()).get();
-            oldComment.setContent("COMMENT DELETED");
-            oldComment.setDeleted(true);
-            commentRepository.save(oldComment);
+            Comment oldComment = commentService.removeComment(commentRequest);
             return new ResponseEntity<>(oldComment, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 
         }
 
@@ -112,12 +70,14 @@ public class CommentController {
     @GetMapping("/comment")
     public ResponseEntity<Comment> getComment(@RequestParam Long commentID) {
         try {
-            Comment comment = commentRepository.findById(commentID).get();
+            Comment comment = commentService.getComment(commentID);
             return new ResponseEntity<>(comment, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 
         }
 
     }
+
+
 }
