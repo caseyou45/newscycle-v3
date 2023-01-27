@@ -92,12 +92,15 @@ public class CommentService {
 
     private Comment mapToEntity(CommentDTO commentRequest) {
         Comment comment = new Comment();
+        comment.setId(commentRequest.getId());
         comment.setAuthor(commentRequest.getAuthor());
         comment.setDeleted(commentRequest.getDeleted());
-        comment.setParentComment(commentRequest.getAuthor());
+        comment.setParentComment(commentRequest.getParentComment());
         comment.setArticle(commentRequest.getArticle());
         comment.setContent(commentRequest.getContent());
         comment.setDate(commentRequest.getDate());
         return comment;
     }
+
+
 }

@@ -36,11 +36,11 @@ public class Article {
     private String url;
     @Column(name = "urltoimage", columnDefinition = "TEXT")
     private String urltoimage;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_article_fk", referencedColumnName = "id")
     private List<Comment> comments;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "like_article_fk", referencedColumnName = "id")
     private List<Like> likes;
 

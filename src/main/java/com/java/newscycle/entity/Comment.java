@@ -38,11 +38,11 @@ public class Comment {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "like_comment_fk", referencedColumnName = "id")
     private List<Like> likes;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_comment_fk", referencedColumnName = "id")
     private List<Comment> replies;
 

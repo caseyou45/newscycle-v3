@@ -30,11 +30,11 @@ public class Users {
     @Column(name = "creationDate")
     private Date creationDate;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "like_user_fk", referencedColumnName = "id")
     private List<Like> likes;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_user_fk", referencedColumnName = "id")
     private List<Comment> comments;
 
