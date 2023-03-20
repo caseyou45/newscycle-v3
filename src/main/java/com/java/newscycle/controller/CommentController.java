@@ -1,6 +1,5 @@
 package com.java.newscycle.controller;
 
-import com.java.newscycle.dto.Comment.CommentDTO;
 import com.java.newscycle.entity.Comment;
 import com.java.newscycle.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class CommentController {
     }
 
     @PostMapping("/comment")
-    public ResponseEntity<Comment> createComment(@RequestBody CommentDTO commentRequest) {
+    public ResponseEntity<Comment> createComment(@RequestBody Comment commentRequest) {
         try {
             Comment savedComment = commentService.createComment(commentRequest);
             return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
@@ -34,7 +33,7 @@ public class CommentController {
     }
 
     @PostMapping("/comment/reply")
-    public ResponseEntity<Comment> createReply(@RequestBody CommentDTO commentRequest) {
+    public ResponseEntity<Comment> createReply(@RequestBody Comment commentRequest) {
         try {
             Comment savedComment = commentService.createReply(commentRequest);
             return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
@@ -45,7 +44,7 @@ public class CommentController {
 
     @PatchMapping(path = "/comment")
     public @ResponseBody
-    ResponseEntity<Comment> updateComment(@RequestBody CommentDTO commentRequest) {
+    ResponseEntity<Comment> updateComment(@RequestBody Comment commentRequest) {
         try {
             Comment savedComment = commentService.updateComment(commentRequest);
             return new ResponseEntity<>(savedComment, HttpStatus.OK);
@@ -55,8 +54,8 @@ public class CommentController {
     }
 
 
-    @DeleteMapping("/comment")
-    public ResponseEntity<Comment> removeComment(@RequestBody CommentDTO commentRequest) {
+    @PatchMapping("/comment/delete")
+    public ResponseEntity<Comment> removeComment(@RequestBody Comment commentRequest) {
         try {
             Comment oldComment = commentService.removeComment(commentRequest);
             return new ResponseEntity<>(oldComment, HttpStatus.OK);

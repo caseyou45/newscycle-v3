@@ -1,5 +1,7 @@
 package com.java.newscycle.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.java.newscycle.dto.Likes.LikeDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +21,7 @@ public class Users {
     @Id
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
-    private Integer id;
+    private Long id;
 
     @Column(name = "username")
     private String username;
@@ -43,6 +45,11 @@ public class Users {
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles = new ArrayList<>();
+
+
+    @Transient
+    @JsonInclude
+    private List<LikeDTO> likeDTOs;
 
 
 }

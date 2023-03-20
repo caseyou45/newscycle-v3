@@ -8,6 +8,7 @@ import com.java.newscycle.entity.Users;
 import com.java.newscycle.repository.RoleRepository;
 import com.java.newscycle.repository.UsersRepository;
 import com.java.newscycle.security.JWTGenerator;
+import com.java.newscycle.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.Date;
@@ -33,15 +31,17 @@ public class UserController {
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private JWTGenerator jwtGenerator;
+    private UsersService usersService;
 
     @Autowired
     public UserController(AuthenticationManager authenticationManager, UsersRepository userRepository,
-                          RoleRepository roleRepository, PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator) {
+                          RoleRepository roleRepository, PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator, UsersService usersService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtGenerator = jwtGenerator;
+        this.usersService = usersService;
     }
 
     @PostMapping("/user/signin")
@@ -80,4 +80,21 @@ public class UserController {
 
         return new ResponseEntity<>("User created", HttpStatus.OK);
     }
+
+
+    @GetMapping("/user")
+    public ResponseEntity<Users> getUser(@RequestParam String username) {
+
+        try {
+            Users user = usersService.getUserByUsername(username);
+
+
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        }
+    }
+
 }

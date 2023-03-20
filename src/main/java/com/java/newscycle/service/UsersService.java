@@ -1,7 +1,11 @@
 package com.java.newscycle.service;
 
 
+import com.java.newscycle.dto.Likes.LikeDTO;
+import com.java.newscycle.entity.Comment;
+import com.java.newscycle.entity.Like;
 import com.java.newscycle.entity.Users;
+import com.java.newscycle.repository.CommentRepository;
 import com.java.newscycle.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,17 +13,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @Service
 public class UsersService {
 
-    @Autowired
     private UsersRepository usersRepository;
 
+
+    private CommentRepository commentRepository;
+
+    @Autowired
+    public UsersService(UsersRepository usersRepository, CommentRepository commentRepository) {
+        this.usersRepository = usersRepository;
+        this.commentRepository = commentRepository;
+    }
+
     public Users getUserByUsername(String username) {
-        return usersRepository.findUsersByUsername(username);
+        Users user = usersRepository.findUsersByUsername(username);
+        List<LikeDTO> likes = new ArrayList<>();
+
+        for (Like like : user.getLikes()) {
+            Comment com = commentRepository.findById(like.getCommentID()).get();
+            likes.add(new LikeDTO(like, com));
+        }
+
+        user.setLikeDTOs(likes);
+        return user;
 
     }
 

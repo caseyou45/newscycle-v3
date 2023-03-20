@@ -1,6 +1,5 @@
 package com.java.newscycle.service;
 
-import com.java.newscycle.dto.Comment.CommentDTO;
 import com.java.newscycle.entity.Article;
 import com.java.newscycle.entity.Comment;
 import com.java.newscycle.entity.Users;
@@ -30,16 +29,13 @@ public class CommentService {
         this.usersRepository = usersRepository;
     }
 
-    public Comment createComment(CommentDTO commentRequest) {
-        Comment comment = mapToEntity(commentRequest);
+    public Comment createComment(Comment commentRequest) {
 
         Article referencedArticle = articleRepository.findById(commentRequest.getArticle()).get();
 
         Users user = usersRepository.findById(commentRequest.getAuthor()).get();
 
-        comment.setUsername(user.getUsername());
-
-        Comment savedComment = commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(commentRequest);
 
         referencedArticle.getComments().add(savedComment);
 
@@ -52,12 +48,11 @@ public class CommentService {
         return savedComment;
     }
 
-    public Comment createReply(CommentDTO commentRequest) {
-        Comment comment = mapToEntity(commentRequest);
+    public Comment createReply(Comment commentRequest) {
 
         Comment parentComment = commentRepository.findById(commentRequest.getParentComment()).orElseThrow(() -> new NoSuchElementException());
 
-        Comment savedComment = commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(commentRequest);
 
         parentComment.getReplies().add(savedComment);
 
@@ -72,34 +67,20 @@ public class CommentService {
         return savedComment;
     }
 
-    public Comment updateComment(CommentDTO commentRequest) {
-        Comment comment = mapToEntity(commentRequest);
-        return commentRepository.save(comment);
+    public Comment updateComment(Comment commentRequest) {
+        return commentRepository.save(commentRequest);
     }
 
-    public Comment removeComment(CommentDTO commentRequest) {
-        Comment comment = mapToEntity(commentRequest);
-        Comment oldComment = commentRepository.findById(comment.getId()).orElseThrow(() -> new NoSuchElementException());
+    public Comment removeComment(Comment commentRequest) {
+        Comment oldComment = commentRepository.findById(commentRequest.getId()).orElseThrow(() -> new NoSuchElementException());
         oldComment.setContent("COMMENT DELETED");
         oldComment.setDeleted(true);
+        oldComment.setUsername("[DELETED]");
         return commentRepository.save(oldComment);
     }
 
     public Comment getComment(Long commentID) {
         return commentRepository.findById(commentID).orElseThrow(() -> new NoSuchElementException());
-    }
-
-
-    private Comment mapToEntity(CommentDTO commentRequest) {
-        Comment comment = new Comment();
-        comment.setId(commentRequest.getId());
-        comment.setAuthor(commentRequest.getAuthor());
-        comment.setDeleted(commentRequest.getDeleted());
-        comment.setParentComment(commentRequest.getParentComment());
-        comment.setArticle(commentRequest.getArticle());
-        comment.setContent(commentRequest.getContent());
-        comment.setDate(commentRequest.getDate());
-        return comment;
     }
 
 

@@ -9,6 +9,7 @@ import com.java.newscycle.repository.ArticleRepository;
 import com.java.newscycle.repository.CommentRepository;
 import com.java.newscycle.repository.LikeRepository;
 import com.java.newscycle.repository.UsersRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -24,6 +25,8 @@ public class LikeService {
 
     LikeRepository likeRepository;
 
+
+    @Autowired
     public LikeService(CommentRepository commentRepository, ArticleRepository articleRepository, UsersRepository usersRepository, LikeRepository likeRepository) {
         this.commentRepository = commentRepository;
         this.articleRepository = articleRepository;
@@ -33,9 +36,11 @@ public class LikeService {
 
     public Like createLike(Like like) {
 
+
         Comment likedComment = commentRepository.findById(like.getCommentID()).get();
 
         Like savedLike = likeRepository.save(like);
+
 
         likedComment.getLikes().add(savedLike);
         commentRepository.save(likedComment);
@@ -47,6 +52,7 @@ public class LikeService {
         Article article = articleRepository.findById(savedLike.getArticleID()).get();
         article.getLikes().add(savedLike);
         articleRepository.save(article);
+
 
         return savedLike;
     }

@@ -1,100 +1,91 @@
 package com.java.newscycle.service;
 
-import com.java.newscycle.dto.Comment.CommentDTO;
 import com.java.newscycle.entity.Comment;
-import com.java.newscycle.entity.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CommentServiceTest {
 
     @Autowired
     CommentService commentService;
 
-    @Autowired
-    UsersService usersService;
+    private Comment savedComment;
 
-    @Autowired
-    ArticleService articleService;
+    private Comment commentRequest;
 
-
-    CommentDTO commentDTO;
-
-    Users user;
+    private Comment replyComment;
 
 
     @BeforeEach
     public void setup() {
 
-        commentDTO = new CommentDTO();
-        commentDTO.setAuthor(1L);
-        commentDTO.setDeleted(false);
-        commentDTO.setParentComment(null);
-        commentDTO.setArticle(1L);
-        commentDTO.setContent("TEST");
-        commentDTO.setDate(new Date());
+        commentRequest = new Comment();
+        commentRequest.setAuthor(10L);
+        commentRequest.setArticle(1L);
+        commentRequest.setContent("TEST CONTENT");
+        commentRequest.setDate(new java.util.Date());
+        commentRequest.setUsername("test");
+
 
     }
 
 
     @Test
     void createComment() {
-        Comment savedComment = commentService.createComment(commentDTO);
-        assertNotNull(savedComment);
+
+
+        savedComment = commentService.createComment(commentRequest);
+
+        assertThat(savedComment.getContent()).as("Save New Comment").isEqualTo(commentRequest.getContent());
 
     }
 
-
     @Test
     void createReply() {
-        commentDTO.setParentComment(1L);
-        Comment savedReply = commentService.createComment(commentDTO);
-        assertNotNull(savedReply);
+
+        savedComment = commentService.createComment(commentRequest);
+
+        commentRequest.setParentComment(savedComment.getId());
+
+        replyComment = commentService.createComment(commentRequest);
+
+        assertThat(replyComment.getParentComment()).as("Save New Reply").isEqualTo(commentRequest.getParentComment());
     }
 
     @Test
     void updateComment() {
-        Comment savedComment = commentService.createComment(commentDTO);
+        savedComment = commentService.createComment(commentRequest);
 
+        String newContent = "New Content";
 
-        CommentDTO u = new CommentDTO(savedComment.getId(),
-                savedComment.getAuthor(),
-                savedComment.getDeleted(),
-                savedComment.getParentComment(),
-                savedComment.getArticle(),
-                "REDO",
-                savedComment.getDate());
+        commentRequest.setContent(newContent);
 
+        Comment updatedComment = commentService.updateComment(commentRequest);
 
-        Comment updatedComment = commentService.updateComment(u);
-        assertEquals(updatedComment.getContent(), "REDO");
+        assertThat(updatedComment.getParentComment()).as("Update Comment Content").isEqualTo(commentRequest.getParentComment());
 
 
     }
 
     @Test
     void removeComment() {
-        Comment savedComment = commentService.createComment(commentDTO);
-        commentDTO.setId(savedComment.getId());
-        Comment deletedComment = commentService.removeComment(commentDTO);
-        assertEquals(deletedComment.getDeleted(), true);
-        assertEquals(deletedComment.getContent(), "COMMENT DELETED");
+        savedComment = commentService.createComment(commentRequest);
+        commentRequest.setId(savedComment.getId());
+        Comment removedComment = commentService.removeComment(commentRequest);
+        assertThat(removedComment.getUsername()).as("Remove Comment").isEqualTo("[DELETED]");
+
     }
 
     @Test
     void getComment() {
-        Comment savedComment = commentService.createComment(commentDTO);
-        assertNotNull(commentService.getComment(savedComment.getId()));
+        savedComment = commentService.createComment(commentRequest);
+        Comment comment = commentService.getComment(savedComment.getId());
+        assertThat(savedComment.getId()).as("Get Comment").isEqualTo(comment.getId());
+
     }
 }
