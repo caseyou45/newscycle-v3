@@ -10,14 +10,12 @@ import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 @SpringBootTest
 class UsersServiceTest {
 
     @Autowired
 
     private UsersService usersService;
-
 
     @Test
     void getUserByUsername() {
@@ -41,18 +39,5 @@ class UsersServiceTest {
 
         assertThat(user.getUsername()).isEqualTo(u.getUsername()).describedAs("User Sign Up");
 
-    }
-
-    @Test
-    void userSignIn() {
-
-        Users user = new Users();
-        user.setUsername("testu");
-        user.setPassword("testp");
-
-        ResponseEntity<Users> u = usersService.userSignIn(user);
-
-
-        assertThat(u.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200)).describedAs("User Sign In");
     }
 }

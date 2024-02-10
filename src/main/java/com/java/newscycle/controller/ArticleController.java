@@ -2,47 +2,39 @@ package com.java.newscycle.controller;
 
 import com.java.newscycle.entity.Article;
 import com.java.newscycle.service.ArticleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/article")
 public class ArticleController {
 
-    ArticleService articleService;
+    private final ArticleService articleService;
 
-    @Autowired
     public ArticleController(ArticleService articleService) {
         this.articleService = articleService;
     }
 
-    @GetMapping("/article")
+    @GetMapping("/id")
     public ResponseEntity<Article> getArticleByID(@RequestParam long id) {
-
         try {
             Article article = articleService.getArticleByID(id);
-            return new ResponseEntity<>(article, HttpStatus.OK);
+            return ResponseEntity.ok(article);
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @GetMapping(path = "/article/category")
-    public @ResponseBody
-    ResponseEntity<List<Article>> getArticlesByCategory(@RequestParam String category) {
-
+    @GetMapping("/category")
+    public ResponseEntity<List<Article>> getArticlesByCategory(@RequestParam String category) {
         try {
             List<Article> articles = articleService.getArticlesByCategory(category);
-            return new ResponseEntity<>(articles, HttpStatus.OK);
+            return ResponseEntity.ok(articles);
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

@@ -9,7 +9,6 @@ import com.java.newscycle.repository.RoleRepository;
 import com.java.newscycle.repository.UsersRepository;
 import com.java.newscycle.security.JWTGenerator;
 import com.java.newscycle.service.UsersService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,9 +32,9 @@ public class UserController {
     private JWTGenerator jwtGenerator;
     private UsersService usersService;
 
-    @Autowired
     public UserController(AuthenticationManager authenticationManager, UsersRepository userRepository,
-                          RoleRepository roleRepository, PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator, UsersService usersService) {
+            RoleRepository roleRepository, PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator,
+            UsersService usersService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -46,7 +45,6 @@ public class UserController {
 
     @PostMapping("/user/signin")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDto loginDto) {
-
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -75,24 +73,20 @@ public class UserController {
         Role roles = roleRepository.findByName("USER");
         user.setRoles(Collections.singletonList(roles));
 
-
         userRepository.save(user);
 
         return new ResponseEntity<>("User created", HttpStatus.OK);
     }
-
 
     @GetMapping("/user")
     public ResponseEntity<Users> getUser(@RequestParam String username) {
 
         try {
             Users user = usersService.getUserByUsername(username);
-
-
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            return ResponseEntity.ok(user);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
 
         }
     }

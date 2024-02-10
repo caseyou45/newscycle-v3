@@ -38,13 +38,15 @@ public class Article {
     private String urltoimage;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_article_fk", referencedColumnName = "id")
-    private List<Comment> comments;
+    private List<Comment> comments = List.of();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "like_article_fk", referencedColumnName = "id")
-    private List<Like> likes;
+    private List<Like> likes = List.of();
 
-    public Article(String title, String description, String author, String category, String content, String source_id, String source_name, String publishedat, String url, String urltoimage, List<Comment> comments, List<Like> likes) {
+    public Article(String title, String description, String author, String category, String content, String source_id,
+            String source_name, String publishedat, String url, String urltoimage, List<Comment> comments,
+            List<Like> likes) {
         this.title = title;
         this.description = description;
         this.author = author;

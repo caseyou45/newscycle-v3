@@ -2,81 +2,69 @@ package com.java.newscycle.controller;
 
 import com.java.newscycle.entity.Comment;
 import com.java.newscycle.service.CommentService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
 
-
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping("/api/comment")
 public class CommentController {
 
-    CommentService commentService;
+    private final CommentService commentService;
 
-
-    @Autowired
     public CommentController(CommentService commentService) {
         this.commentService = commentService;
     }
 
-    @PostMapping("/comment")
+    @PostMapping
     public ResponseEntity<Comment> createComment(@RequestBody Comment commentRequest) {
         try {
             Comment savedComment = commentService.createComment(commentRequest);
-            return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @PostMapping("/comment/reply")
+    @PostMapping("/reply")
     public ResponseEntity<Comment> createReply(@RequestBody Comment commentRequest) {
         try {
             Comment savedComment = commentService.createReply(commentRequest);
-            return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @PatchMapping(path = "/comment")
-    public @ResponseBody
-    ResponseEntity<Comment> updateComment(@RequestBody Comment commentRequest) {
+    @PatchMapping
+    public ResponseEntity<Comment> updateComment(@RequestBody Comment commentRequest) {
         try {
             Comment savedComment = commentService.updateComment(commentRequest);
-            return new ResponseEntity<>(savedComment, HttpStatus.OK);
+            return ResponseEntity.ok(savedComment);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
-
-    @PatchMapping("/comment/delete")
+    @PatchMapping("/delete")
     public ResponseEntity<Comment> removeComment(@RequestBody Comment commentRequest) {
         try {
             Comment oldComment = commentService.removeComment(commentRequest);
-            return new ResponseEntity<>(oldComment, HttpStatus.OK);
+            return ResponseEntity.ok(oldComment);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-
+            return ResponseEntity.notFound().build();
         }
-
     }
 
-    @GetMapping("/comment")
-    public ResponseEntity<Comment> getComment(@RequestParam Long commentID) {
+    @GetMapping("/{commentID}")
+    public ResponseEntity<Comment> getComment(@PathVariable Long commentID) {
         try {
             Comment comment = commentService.getComment(commentID);
-            return new ResponseEntity<>(comment, HttpStatus.OK);
+            return ResponseEntity.ok(comment);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-
+            return ResponseEntity.notFound().build();
         }
-
     }
-
-
 }

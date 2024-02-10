@@ -6,62 +6,47 @@ import com.java.newscycle.entity.Users;
 import com.java.newscycle.repository.ArticleRepository;
 import com.java.newscycle.repository.CommentRepository;
 import com.java.newscycle.repository.UsersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 
-
 @Service
 public class CommentService {
 
-    CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
+    private final ArticleRepository articleRepository;
+    private final UsersRepository usersRepository;
 
-    ArticleRepository articleRepository;
-
-    UsersRepository usersRepository;
-
-
-    @Autowired
-    public CommentService(CommentRepository commentRepository, ArticleRepository articleRepository, UsersRepository usersRepository) {
+    public CommentService(CommentRepository commentRepository, ArticleRepository articleRepository,
+            UsersRepository usersRepository) {
         this.commentRepository = commentRepository;
         this.articleRepository = articleRepository;
         this.usersRepository = usersRepository;
     }
 
     public Comment createComment(Comment commentRequest) {
-
-        Article referencedArticle = articleRepository.findById(commentRequest.getArticle()).get();
-
-        Users user = usersRepository.findById(commentRequest.getAuthor()).get();
+        Article referencedArticle = getArticleById(commentRequest.getArticle());
+        Users user = getUserById(commentRequest.getAuthor());
 
         Comment savedComment = commentRepository.save(commentRequest);
-
         referencedArticle.getComments().add(savedComment);
-
         articleRepository.save(referencedArticle);
 
         user.getComments().add(savedComment);
-
         usersRepository.save(user);
 
         return savedComment;
     }
 
     public Comment createReply(Comment commentRequest) {
-
-        Comment parentComment = commentRepository.findById(commentRequest.getParentComment()).orElseThrow(() -> new NoSuchElementException());
-
+        Comment parentComment = getCommentById(commentRequest.getParentComment());
         Comment savedComment = commentRepository.save(commentRequest);
 
         parentComment.getReplies().add(savedComment);
-
         commentRepository.save(parentComment);
 
-        Users user = usersRepository.findById(commentRequest.getAuthor()).orElseThrow(() -> new NoSuchElementException());
-
+        Users user = getUserById(commentRequest.getAuthor());
         user.getComments().add(savedComment);
-
         usersRepository.save(user);
 
         return savedComment;
@@ -72,7 +57,7 @@ public class CommentService {
     }
 
     public Comment removeComment(Comment commentRequest) {
-        Comment oldComment = commentRepository.findById(commentRequest.getId()).orElseThrow(() -> new NoSuchElementException());
+        Comment oldComment = getCommentById(commentRequest.getId());
         oldComment.setContent("COMMENT DELETED");
         oldComment.setDeleted(true);
         oldComment.setUsername("[DELETED]");
@@ -80,8 +65,21 @@ public class CommentService {
     }
 
     public Comment getComment(Long commentID) {
-        return commentRepository.findById(commentID).orElseThrow(() -> new NoSuchElementException());
+        return getCommentById(commentID);
     }
 
+    private Article getArticleById(Long articleId) {
+        return articleRepository.findById(articleId)
+                .orElseThrow(() -> new NoSuchElementException("Article not found with ID: " + articleId));
+    }
 
+    private Users getUserById(Long userId) {
+        return usersRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
+    }
+
+    private Comment getCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("Comment not found with ID: " + commentId));
+    }
 }
