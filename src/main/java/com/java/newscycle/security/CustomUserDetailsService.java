@@ -1,10 +1,8 @@
 package com.java.newscycle.security;
 
-
 import com.java.newscycle.entity.Role;
 import com.java.newscycle.entity.Users;
 import com.java.newscycle.repository.UsersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -22,7 +20,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private UsersRepository usersRepository;
 
-    @Autowired
     public CustomUserDetailsService(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
     }

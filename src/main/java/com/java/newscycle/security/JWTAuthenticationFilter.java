@@ -1,6 +1,5 @@
 package com.java.newscycle.security;
 
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,18 +18,19 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JWTGenerator tokenGenerator;
+
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private ValidateBurner validateBurner;
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
         String token = getJWTFromRequest(request);
+
         if (StringUtils.hasText(token) && tokenGenerator.validateToken(token)) {
             String username = tokenGenerator.getUsernameFromJWT(token);
 
@@ -39,7 +39,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             }
 
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null,
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    userDetails, null,
                     userDetails.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);

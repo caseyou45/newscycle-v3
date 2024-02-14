@@ -39,6 +39,9 @@ public class Comment {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content = "";
 
+    @Column(name = "sentimentScore")
+    private double sentimentScore;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "like_comment_fk", referencedColumnName = "id")
     private List<Like> likes = List.of();

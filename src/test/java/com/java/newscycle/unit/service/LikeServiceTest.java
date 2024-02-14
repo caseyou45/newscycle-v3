@@ -22,7 +22,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
 class LikeServiceTest {
 
@@ -41,7 +40,6 @@ class LikeServiceTest {
     @Mock
     LikeRepository likeRepository;
 
-
     Comment comment;
     Article article;
     Users user;
@@ -52,13 +50,15 @@ class LikeServiceTest {
         java.util.Date utilDate = new java.util.Date();
         java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
-        user = new Users(1L, "username", "password", sqlDate, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        comment = new Comment(1L, 1L, "username", false, null, 1L, sqlDate, "testContent", new ArrayList<>(), new ArrayList<>());
-        article = new Article(1L, "title", "description", "author", "General", "content", "source_id", "source_name", "publishedat", "url", "urltoimage", new ArrayList<>(), new ArrayList<>());
+        user = new Users(1L, "username", "password", sqlDate, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>());
+        // comment = new Comment(1L, 1L, "username", false, null, 1L, sqlDate,
+        // "testContent", new ArrayList<>(), new ArrayList<>());
+        article = new Article(1L, "title", "description", "author", "General", "content", "source_id", "source_name",
+                "publishedat", "url", "urltoimage", new ArrayList<>(), new ArrayList<>());
         madeLike = new Like(1L, 1L, 1L, 1L);
 
     }
-
 
     @Test
     void createLike() {
@@ -75,12 +75,10 @@ class LikeServiceTest {
 
         assertThat(savedLike).isEqualTo(madeLike);
 
-
     }
 
     @Test
     void deleteLike() {
-
 
         when(commentRepository.findById(madeLike.getCommentID())).thenReturn(Optional.of(comment));
 
@@ -91,7 +89,6 @@ class LikeServiceTest {
         when(likeRepository.findById(madeLike.getArticleID())).thenReturn(Optional.of(madeLike));
 
         likeService.deleteLike(madeLike);
-
 
     }
 }

@@ -3,6 +3,7 @@ package com.java.newscycle.service;
 import com.java.newscycle.entity.Article;
 import com.java.newscycle.entity.Comment;
 import com.java.newscycle.entity.Users;
+import com.java.newscycle.exception.NegativeSentimentError;
 import com.java.newscycle.repository.ArticleRepository;
 import com.java.newscycle.repository.CommentRepository;
 import com.java.newscycle.repository.UsersRepository;
@@ -16,15 +17,25 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ArticleRepository articleRepository;
     private final UsersRepository usersRepository;
+    private final SentimentAnalyzerService sentimentAnalyzer;
 
     public CommentService(CommentRepository commentRepository, ArticleRepository articleRepository,
-            UsersRepository usersRepository) {
+            UsersRepository usersRepository, SentimentAnalyzerService sentimentAnalyzer) {
         this.commentRepository = commentRepository;
         this.articleRepository = articleRepository;
         this.usersRepository = usersRepository;
+        this.sentimentAnalyzer = sentimentAnalyzer;
+
     }
 
     public Comment createComment(Comment commentRequest) {
+        double sentiment = sentimentAnalyzer.analyzeSentiment(commentRequest.getContent());
+
+        if (sentiment < 0) {
+            throw new NegativeSentimentError("Comment sentiment is too negative");
+        }
+
+        commentRequest.setSentimentScore(sentiment);
         Article referencedArticle = getArticleById(commentRequest.getArticle());
         Users user = getUserById(commentRequest.getAuthor());
 

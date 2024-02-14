@@ -1,6 +1,7 @@
 package com.java.newscycle.controller;
 
 import com.java.newscycle.entity.Comment;
+import com.java.newscycle.exception.NegativeSentimentError;
 import com.java.newscycle.service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ public class CommentController {
         try {
             Comment savedComment = commentService.createComment(commentRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
+        } catch (NegativeSentimentError e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
