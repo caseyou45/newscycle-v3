@@ -1,0 +1,2 @@
+06:41:45.123 [http-nio-8080-exec-1] ERROR c.j.n.logging.CommentSentimentLogger - Comment sentiment is too negative. Comment details: id=null, author=4, username=burner-KOiSy76T, content=I hate this and I hate you!
+06:42:56.351 [http-nio-8080-exec-2] ERROR c.j.n.logging.CommentSentimentLogger - Comment sentiment is too negative. Comment details: id=null, author=4, username=burner-KOiSy76T, content=I hate this and I hate you!

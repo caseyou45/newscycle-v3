@@ -4,6 +4,7 @@ import com.java.newscycle.entity.Article;
 import com.java.newscycle.entity.Comment;
 import com.java.newscycle.entity.Users;
 import com.java.newscycle.exception.NegativeSentimentError;
+import com.java.newscycle.logging.CommentSentimentLogger;
 import com.java.newscycle.repository.ArticleRepository;
 import com.java.newscycle.repository.CommentRepository;
 import com.java.newscycle.repository.UsersRepository;
@@ -18,13 +19,16 @@ public class CommentService {
     private final ArticleRepository articleRepository;
     private final UsersRepository usersRepository;
     private final SentimentAnalyzerService sentimentAnalyzer;
+    private final CommentSentimentLogger commentSentimentLogger;
 
     public CommentService(CommentRepository commentRepository, ArticleRepository articleRepository,
-            UsersRepository usersRepository, SentimentAnalyzerService sentimentAnalyzer) {
+            UsersRepository usersRepository, SentimentAnalyzerService sentimentAnalyzer,
+            CommentSentimentLogger commentSentimentLogger) {
         this.commentRepository = commentRepository;
         this.articleRepository = articleRepository;
         this.usersRepository = usersRepository;
         this.sentimentAnalyzer = sentimentAnalyzer;
+        this.commentSentimentLogger = commentSentimentLogger;
 
     }
 
@@ -32,6 +36,7 @@ public class CommentService {
         double sentiment = sentimentAnalyzer.analyzeSentiment(commentRequest.getContent());
 
         if (sentiment < 0) {
+            commentSentimentLogger.logNegativeSentimentError(commentRequest);
             throw new NegativeSentimentError("Comment sentiment is too negative");
         }
 
@@ -50,6 +55,14 @@ public class CommentService {
     }
 
     public Comment createReply(Comment commentRequest) {
+
+        double sentiment = sentimentAnalyzer.analyzeSentiment(commentRequest.getContent());
+
+        if (sentiment < 0) {
+            commentSentimentLogger.logNegativeSentimentError(commentRequest);
+            throw new NegativeSentimentError("Comment sentiment is too negative");
+        }
+
         Comment parentComment = getCommentById(commentRequest.getParentComment());
         Comment savedComment = commentRepository.save(commentRequest);
 

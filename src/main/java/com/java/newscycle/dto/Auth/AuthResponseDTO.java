@@ -1,18 +1,14 @@
 package com.java.newscycle.dto.Auth;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class AuthResponseDTO {
+
     private String accessToken;
-    private String tokenType = "Bearer ";
-
-    private Long id;
     private String username;
+    private Long id;
 
-    public AuthResponseDTO(String accessToken, String username, Long id) {
-        this.accessToken = accessToken;
-        this.username = username;
-        this.id = id;
-    }
 }

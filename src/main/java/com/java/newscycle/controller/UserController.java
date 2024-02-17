@@ -1,8 +1,8 @@
 package com.java.newscycle.controller;
 
 import com.java.newscycle.dto.Auth.AuthResponseDTO;
-import com.java.newscycle.dto.Auth.LoginDto;
-import com.java.newscycle.dto.Auth.RegisterDto;
+import com.java.newscycle.dto.Auth.LoginDTO;
+import com.java.newscycle.dto.Auth.RegisterDTO;
 import com.java.newscycle.entity.Role;
 import com.java.newscycle.entity.Users;
 import com.java.newscycle.repository.RoleRepository;
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/user/signin")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO loginDto) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -57,7 +57,8 @@ public class UserController {
     }
 
     @PostMapping("/user/signup")
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<String> register(@RequestBody RegisterDTO registerDto) {
+
         if (userRepository.findUsersByUsername(registerDto.getUsername()) != null) {
             return new ResponseEntity<>("Username is not available", HttpStatus.BAD_REQUEST);
         }

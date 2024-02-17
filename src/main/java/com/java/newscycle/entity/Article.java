@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,7 +15,8 @@ import java.util.List;
 @Table(name = "articles")
 public class Article {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "article_generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
     @Column(name = "title")
     private String title;
@@ -38,11 +40,11 @@ public class Article {
     private String urltoimage;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_article_fk", referencedColumnName = "id")
-    private List<Comment> comments = List.of();
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "like_article_fk", referencedColumnName = "id")
-    private List<Like> likes = List.of();
+    private List<Like> likes = new ArrayList<>();
 
     public Article(String title, String description, String author, String category, String content, String source_id,
             String source_name, String publishedat, String url, String urltoimage, List<Comment> comments,

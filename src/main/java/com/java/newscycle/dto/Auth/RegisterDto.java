@@ -1,9 +1,11 @@
 package com.java.newscycle.dto.Auth;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class RegisterDto {
+@AllArgsConstructor
+public class RegisterDTO {
     private String username;
     private String password;
 }

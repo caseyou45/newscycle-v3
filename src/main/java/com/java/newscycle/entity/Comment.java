@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
 @Table(name = "comments")
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     @Column(name = "author")
@@ -44,9 +46,10 @@ public class Comment {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "like_comment_fk", referencedColumnName = "id")
-    private List<Like> likes = List.of();
+    private List<Like> likes = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_comment_fk", referencedColumnName = "id")
-    private List<Comment> replies = List.of();
+    private List<Comment> replies = new ArrayList<>();
+
 }

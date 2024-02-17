@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "likes")
 public class Like {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "like_generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     @Column(name = "author")
@@ -23,6 +24,5 @@ public class Like {
 
     @Column(name = "commentID")
     private Long commentID;
-
 
 }
